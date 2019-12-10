@@ -33,7 +33,7 @@ function generateSize(width, height, prefix = 'displayed') {
   return size;
 }
 
-function generateImage(size, coords, networkRecord, src = 'https://google.com/logo.png') {
+function generateImage(size, coords, networkRecord, src = 'https://google.com/logo.png', isLazyLoadedFlag = false) {
   Object.assign(networkRecord || {}, {url: src});
 
   const x = coords[0];
@@ -45,8 +45,14 @@ function generateImage(size, coords, networkRecord, src = 'https://google.com/lo
     left: x,
     right: x + size.displayedWidth,
   };
+
+  // TODO: pick better name for flag
+  const props = {
+    isLazyLoaded: isLazyLoadedFlag,
+  };
+
   const image = {src, clientRect, ...networkRecord};
-  Object.assign(image, size);
+  Object.assign(image, size, props);
   return image;
 }
 
@@ -126,6 +132,25 @@ describe('OffscreenImages audit', () => {
 
     const auditResult = await UnusedImages.audit_(artifacts, networkRecords, context);
     assert.equal(auditResult.items.length, 4);
+  });
+
+  it('passes images with the lazy load attribute', async () => {
+    const topLevelTasks = [{ts: 1900, duration: 100}];
+    const networkRecord = generateRecord({resourceSizeInKb: 100});
+    const artifacts = {
+      ViewportDimensions: DEFAULT_DIMENSIONS,
+      ImageElements: [
+        // offscreen with lazy loaded attribute
+        // TODO: figure out whether true is being set as URL
+        generateImage(generateSize(100, 100), [3000, 0], networkRecord, true),
+      ],
+      traces: {defaultPass: createTestTrace({topLevelTasks})},
+      devtoolsLogs: {},
+    };
+
+    return UnusedImages.audit_(artifacts, [networkRecord], context).then(auditResult => {
+      assert.equal(auditResult.items.length, 1);
+    });
   });
 
   it('finds images with 0 area', () => {

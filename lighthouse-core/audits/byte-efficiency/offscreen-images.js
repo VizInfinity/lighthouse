@@ -76,7 +76,8 @@ class OffscreenImages extends ByteEfficiencyAudit {
    */
   static computeWaste(image, viewportDimensions, networkRecords) {
     const networkRecord = networkRecords.find(record => record.url === image.src);
-    if (!image.resourceSize || !networkRecord) {
+    // TODO: sanity-check
+    if (!image.resourceSize || !networkRecord || image.isLazyLoaded) {
       return null;
     }
 

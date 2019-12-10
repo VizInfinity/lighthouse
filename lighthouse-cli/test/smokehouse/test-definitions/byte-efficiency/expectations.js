@@ -74,8 +74,6 @@ const expectations = [
                 url: /lighthouse-480x320.webp$/,
               }, {
                 url: /lighthouse-480x320.webp\?invisible$/,
-              }, {
-                url: /large.svg$/,
               },
             ],
           },
