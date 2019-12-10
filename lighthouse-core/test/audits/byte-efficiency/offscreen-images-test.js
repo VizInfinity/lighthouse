@@ -33,7 +33,7 @@ function generateSize(width, height, prefix = 'displayed') {
   return size;
 }
 
-function generateImage(size, coords, networkRecord, src = 'https://google.com/logo.png', isLazyLoadedFlag = false) {
+function generateImage(size, coords, networkRecord, src = 'https://google.com/logo.png', isLazyLoaded = false) {
   Object.assign(networkRecord || {}, {url: src});
 
   const x = coords[0];
@@ -46,9 +46,9 @@ function generateImage(size, coords, networkRecord, src = 'https://google.com/lo
     right: x + size.displayedWidth,
   };
 
-  // TODO: pick better name for flag
+  // TODO: there is probably a better way to do this
   const props = {
-    isLazyLoaded: isLazyLoadedFlag,
+    isLazyLoaded: isLazyLoaded,
   };
 
   const image = {src, clientRect, ...networkRecord};
@@ -135,21 +135,21 @@ describe('OffscreenImages audit', () => {
   });
 
   it('passes images with the lazy load attribute', async () => {
+    const urlB = `https://google.com/logo2.png`;
     const topLevelTasks = [{ts: 1900, duration: 100}];
-    const networkRecord = generateRecord({resourceSizeInKb: 100});
+    const networkRecord = generateRecord({url: urlB, resourceSizeInKb: 100});
     const artifacts = {
       ViewportDimensions: DEFAULT_DIMENSIONS,
       ImageElements: [
-        // offscreen with lazy loaded attribute
-        // TODO: figure out whether true is being set as URL
-        generateImage(generateSize(100, 100), [3000, 0], networkRecord, true),
+        // offscreen, but has the lazy loaded attribute set
+        generateImage(generateSize(100, 100), [3000, 0], networkRecord, urlB, true),
       ],
       traces: {defaultPass: createTestTrace({topLevelTasks})},
       devtoolsLogs: {},
     };
 
     return UnusedImages.audit_(artifacts, [networkRecord], context).then(auditResult => {
-      assert.equal(auditResult.items.length, 1);
+      assert.equal(auditResult.items.length, 0);
     });
   });
 
