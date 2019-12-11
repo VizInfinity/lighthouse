@@ -123,6 +123,7 @@ class OffscreenImages extends ByteEfficiencyAudit {
         startTimesByURL.set(networkNode.record.url, timing.startTime);
       }
     }
+    console.log({images});
 
     return images.filter(image => {
       // Filter out images that had little waste
@@ -142,6 +143,7 @@ class OffscreenImages extends ByteEfficiencyAudit {
    */
   static filterObservedResults(images, interactiveTimestamp) {
     return images.filter(image => {
+      console.log(image.url, (image.wastedBytes < IGNORE_THRESHOLD_IN_BYTES), (image.wastedBytes < IGNORE_THRESHOLD_IN_BYTES), image.requestStartTime < interactiveTimestamp / 1e6 - IGNORE_THRESHOLD_IN_MS / 1000);
       if (image.wastedBytes < IGNORE_THRESHOLD_IN_BYTES) return false;
       if (image.wastedPercent < IGNORE_THRESHOLD_IN_PERCENT) return false;
       return image.requestStartTime < interactiveTimestamp / 1e6 - IGNORE_THRESHOLD_IN_MS / 1000;
@@ -170,6 +172,7 @@ class OffscreenImages extends ByteEfficiencyAudit {
    * @return {Promise<ByteEfficiencyAudit.ByteEfficiencyProduct>}
    */
   static async audit_(artifacts, networkRecords, context) {
+    console.log('****SDLOFDJSFLDJS FL')
     const images = artifacts.ImageElements;
     const viewportDimensions = artifacts.ViewportDimensions;
     const trace = artifacts.traces[ByteEfficiencyAudit.DEFAULT_PASS];
@@ -209,6 +212,7 @@ class OffscreenImages extends ByteEfficiencyAudit {
       // use interactive to generate items
       const lanternInteractive = /** @type {LH.Artifacts.LanternMetric} */ (interactive);
       // Filter out images that were loaded after all CPU activity
+      console.log(interactive.timing);
       items = context.settings.throttlingMethod === 'simulate' ?
         OffscreenImages.filterLanternResults(unfilteredResults, lanternInteractive) :
         // @ts-ignore - .timestamp will exist if throttlingMethod isn't lantern

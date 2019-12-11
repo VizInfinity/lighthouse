@@ -46,14 +46,13 @@ function generateImage(size, coords, networkRecord, src = 'https://google.com/lo
     right: x + size.displayedWidth,
   };
 
-  // TODO: there is probably a better way to do this
-  const props = {
-    isLazyLoaded: isLazyLoaded,
+  return {
+    src,
+    clientRect,
+    isLazyLoaded,
+    ...networkRecord,
+    ...size,
   };
-
-  const image = {src, clientRect, ...networkRecord};
-  Object.assign(image, size, props);
-  return image;
 }
 
 describe('OffscreenImages audit', () => {
