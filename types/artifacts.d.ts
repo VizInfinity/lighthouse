@@ -365,8 +365,8 @@ declare global {
         resourceSize: number;
         /** The MIME type of the underlying image file. */
         mimeType?: string;
-        /** Flags whether the loading attribute was specified as lazy. */
-        isLazyLoaded: boolean;
+        /** The loading attribute of the image. */
+        loading?: string;
       }
 
       export interface OptimizedImage {

@@ -33,7 +33,7 @@ function generateSize(width, height, prefix = 'displayed') {
   return size;
 }
 
-function generateImage(size, coords, networkRecord, src = 'https://google.com/logo.png', isLazyLoaded = false) {
+function generateImage(size, coords, networkRecord, src = 'https://google.com/logo.png', loading = null) {
   Object.assign(networkRecord || {}, {url: src});
 
   const x = coords[0];
@@ -49,7 +49,7 @@ function generateImage(size, coords, networkRecord, src = 'https://google.com/lo
   return {
     src,
     clientRect,
-    isLazyLoaded,
+    loading,
     ...networkRecord,
     ...size,
   };
@@ -133,21 +133,26 @@ describe('OffscreenImages audit', () => {
     assert.equal(auditResult.items.length, 4);
   });
 
-  it('passes images with the lazy load attribute', async () => {
-    const urlB = `https://google.com/logo2.png`;
+  it('passes images with a specified loading attribute', async () => {
+    const url = s => `https://google.com/logo${s}.png`;
     const topLevelTasks = [{ts: 1900, duration: 100}];
-    const networkRecord = generateRecord({url: urlB, resourceSizeInKb: 100});
+    const networkRecords = [
+      generateRecord({url: url('A'), resourceSizeInKb: 100}),
+      generateRecord({url: url('B'), resourceSizeInKb: 100}),
+    ];
     const artifacts = {
       ViewportDimensions: DEFAULT_DIMENSIONS,
       ImageElements: [
-        // offscreen, but has the lazy loaded attribute set
-        generateImage(generateSize(100, 100), [3000, 0], networkRecord, urlB, true),
+        // offscreen to the right, lazy loaded
+        generateImage(generateSize(200, 200), [3000, 0], networkRecords[0], url('A'), 'lazy'),
+        // offscreen to the bottom, eager loaded
+        generateImage(generateSize(100, 100), [0, 2000], networkRecords[1], url('B'), 'eager'),
       ],
       traces: {defaultPass: createTestTrace({topLevelTasks})},
       devtoolsLogs: {},
     };
 
-    return UnusedImages.audit_(artifacts, [networkRecord], context).then(auditResult => {
+    return UnusedImages.audit_(artifacts, networkRecords, context).then(auditResult => {
       assert.equal(auditResult.items.length, 0);
     });
   });

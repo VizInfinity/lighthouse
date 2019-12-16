@@ -115,8 +115,7 @@ setTimeout(() => {
   <!-- PASS(optimized): image is vector -->
   <!-- PASS(webp): image is vector -->
   <!-- PASS(responsive): image is vector -->
-  <!-- PASS(offscreen): image is offscreen and loads before TTI, however its loading=lazy -->
-  <!-- TODO: why does this pass offscreen now with loading=lazy? threshold? -->
+  <!-- PASS(offscreen): image is offscreen and loads before TTI, but loads lazily -->
   <img style="width: 100px; height: 100px;" src="large.svg?loadinglazy-offscreen" loading="lazy">
 
   <!-- PASS(optimized): image is JPEG optimized -->

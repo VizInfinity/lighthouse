@@ -51,7 +51,7 @@ function getHTMLImages(allElements) {
       naturalWidth: element.naturalWidth,
       naturalHeight: element.naturalHeight,
       isCss: false,
-      isLazyLoaded: element.loading === 'lazy',
+      loading: element.loading,
       resourceSize: 0, // this will get overwritten below
       isPicture: !!element.parentElement && element.parentElement.tagName === 'PICTURE',
       usesObjectFit: ['cover', 'contain', 'scale-down', 'none'].includes(
@@ -92,9 +92,6 @@ function getCSSImages(allElements) {
       naturalWidth: 0,
       naturalHeight: 0,
       isCss: true,
-      // CSS images do not have the loading attribute
-      // https://web.dev/native-lazy-loading/?utm_source=lighthouse&utm_medium=cli#load-in-distance-threshold
-      isLazyLoaded: false,
       isPicture: false,
       usesObjectFit: false,
       resourceSize: 0, // this will get overwritten below
