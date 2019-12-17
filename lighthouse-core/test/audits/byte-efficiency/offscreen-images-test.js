@@ -21,7 +21,7 @@ function generateRecord({
   return {
     url,
     mimeType,
-    startTime, // DevTools timestamp which is in seconds
+    startTime, // DevTools timestamp which is in seconds.
     resourceSize: resourceSizeInKb * 1024,
   };
 }
@@ -114,15 +114,15 @@ describe('OffscreenImages audit', () => {
     const artifacts = {
       ViewportDimensions: DEFAULT_DIMENSIONS,
       ImageElements: [
-        // offscreen to the right
+        // Offscreen to the right.
         generateImage(generateSize(200, 200), [3000, 0], networkRecords[0]),
-        // offscreen to the bottom
+        // Offscreen to the bottom.
         generateImage(generateSize(100, 100), [0, 2000], networkRecords[1], url('B')),
-        // offscreen to the top-left
+        // Offscreen to the top-left.
         generateImage(generateSize(100, 100), [-2000, -1000], networkRecords[2], url('C')),
-        // offscreen to the bottom-right
+        // Offscreen to the bottom-right.
         generateImage(generateSize(100, 100), [3000, 2000], networkRecords[3], url('D')),
-        // half offscreen to the top, should not warn
+        // Half offscreen to the top, should not warn.
         generateImage(generateSize(1000, 1000), [0, -500], networkRecords[4], url('E')),
       ],
       traces: {defaultPass: createTestTrace({topLevelTasks})},
@@ -143,9 +143,9 @@ describe('OffscreenImages audit', () => {
     const artifacts = {
       ViewportDimensions: DEFAULT_DIMENSIONS,
       ImageElements: [
-        // offscreen to the right, lazy loaded
+        // Offscreen to the right, but lazy loaded.
         generateImage(generateSize(200, 200), [3000, 0], networkRecords[0], url('A'), 'lazy'),
-        // offscreen to the bottom, eager loaded
+        // Offscreen to the bottom, but eager loaded.
         generateImage(generateSize(100, 100), [0, 2000], networkRecords[1], url('B'), 'eager'),
       ],
       traces: {defaultPass: createTestTrace({topLevelTasks})},
@@ -207,7 +207,7 @@ describe('OffscreenImages audit', () => {
     const artifacts = {
       ViewportDimensions: DEFAULT_DIMENSIONS,
       ImageElements: [
-        // offscreen to the right
+        // Offscreen to the right.
         generateImage(generateSize(200, 200), [3000, 0], networkRecord),
       ],
       traces: {defaultPass: createTestTrace({topLevelTasks})},
@@ -224,7 +224,7 @@ describe('OffscreenImages audit', () => {
     const artifacts = {
       ViewportDimensions: DEFAULT_DIMENSIONS,
       ImageElements: [
-        // offscreen to the right
+        // Offscreen to the right.
         generateImage(generateSize(200, 200), [3000, 0], networkRecord),
       ],
       traces: {defaultPass: createTestTrace({traceEnd: 2000})},
@@ -241,7 +241,7 @@ describe('OffscreenImages audit', () => {
     const artifacts = {
       ViewportDimensions: DEFAULT_DIMENSIONS,
       ImageElements: [
-        // offscreen to the right
+        // Offscreen to the right.
         generateImage(generateSize(100, 100), [0, 2000], networkRecord),
       ],
       traces: {defaultPass: createTestTrace({traceEnd: 2000})},
