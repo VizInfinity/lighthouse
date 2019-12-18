@@ -221,6 +221,44 @@ describe('OffscreenImages audit', () => {
     });
   });
 
+  it('fails images with an unspecified or arbitrary loading attribute', async () => {
+    const url = s => `https://google.com/logo${s}.png`;
+    const topLevelTasks = [{ts: 1900, duration: 100}];
+    const networkRecords = [
+      generateRecord({url: url('A'), resourceSizeInKb: 100}),
+      generateRecord({url: url('B'), resourceSizeInKb: 100}),
+    ];
+    const artifacts = {
+      ViewportDimensions: DEFAULT_DIMENSIONS,
+      ImageElements: [
+        // Offscreen to the right with auto loading (same as not specifying the attribute).
+        generateImage({
+          size: generateSize(200, 200),
+          x: 3000,
+          y: 0,
+          networkRecord: networkRecords[0],
+          loading: 'auto',
+          src: url('A'),
+        }),
+        // Offscreen to the bottom, with an arbitrary loading attribute.
+        generateImage({
+          size: generateSize(100, 100),
+          x: 0,
+          y: 2000,
+          networkRecord: networkRecords[1],
+          loading: 'imagination',
+          src: url('B'),
+        }),
+      ],
+      traces: {defaultPass: createTestTrace({topLevelTasks})},
+      devtoolsLogs: {},
+    };
+
+    return UnusedImages.audit_(artifacts, networkRecords, context).then(auditResult => {
+      assert.equal(auditResult.items.length, 2);
+    });
+  });
+
   it('finds images with 0 area', () => {
     const topLevelTasks = [{ts: 1900, duration: 100}];
     const networkRecord = generateRecord({resourceSizeInKb: 100});
